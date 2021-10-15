@@ -33,12 +33,15 @@ class FilmListAdapter(
         return filmsList.size
     }
 
-    inner class FilmListViewHolder(private val binding: FilmCellBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class FilmListViewHolder(private val binding: FilmCellBinding) :
+        RecyclerView.ViewHolder(binding.root) {
 
         fun bind(film: Film) {
-            binding.movieTitleTextView.text = film.title
-            binding.yearTextView.text = film.year
-            binding.ratingTextView.text = film.rating
+            with(binding) {
+                movieTitleTextView.text = film.title
+                yearTextView.text = film.year
+                ratingTextView.text = film.rating
+            }
             itemView.setOnClickListener { v: View? ->
                 onItemClick.invoke(
                     film
