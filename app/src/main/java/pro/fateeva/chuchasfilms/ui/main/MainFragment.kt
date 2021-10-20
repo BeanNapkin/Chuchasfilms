@@ -1,5 +1,6 @@
 package pro.fateeva.chuchasfilms.ui.main
 
+import android.app.ProgressDialog.show
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,6 +13,7 @@ import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.main_activity.view.*
 import pro.fateeva.chuchasfilms.R
 import pro.fateeva.chuchasfilms.databinding.MainFragmentBinding
+import pro.fateeva.chuchasfilms.ui.main.SnackbarExtensions.showSnackbar
 
 
 class MainFragment : Fragment() {
@@ -71,18 +73,19 @@ class MainFragment : Fragment() {
         when (appState) {
             is AppState.Success -> {
                 binding.loadingLayout.visibility = View.GONE
-                binding.recyclerPopularFilmList.adapter = FilmListAdapter(appState.filmsList) { film ->
-                    openFilmDetails(
-                        film
-                    )
-                }
+                binding.recyclerPopularFilmList.adapter =
+                    FilmListAdapter(appState.filmsList) { film ->
+                        openFilmDetails(
+                            film
+                        )
+                    }
             }
             is AppState.Error -> {
                 binding.loadingLayout.visibility = View.GONE
-                Snackbar
-                    .make(binding.root, "Error", Snackbar.LENGTH_INDEFINITE)
-                    .setAction("Reload") { viewModel.getFilmsFromLocalSource() }
-                    .show()
+                binding.root.showSnackbar(
+                    R.string.error,
+                    R.string.reload
+                ) { viewModel.getFilmsFromLocalSource() }
             }
             AppState.Loading -> {
                 binding.loadingLayout.visibility = View.VISIBLE

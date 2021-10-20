@@ -26,14 +26,15 @@ class AboutFilmFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val film = arguments?.getParcelable<Film>(BUNDLE_EXTRA)
-        if (film != null) {
-            binding.titleTextView.text = film.title
-            binding.yearTextView.text = film.year
-            binding.genreTextView.text = film.genre
-            binding.ratingTextViewTextView.text = film.rating
-            binding.descriptionTextViewTextView.text = film.description
-            binding.castTextView.text = film.cast
+        arguments?.getParcelable<Film>(BUNDLE_EXTRA)?.let {
+            with(binding) {
+                titleTextView.text = it.title
+                yearTextView.text = it.year
+                genreTextView.text = it.genre
+                ratingTextViewTextView.text = it.rating
+                descriptionTextViewTextView.text = it.description
+                castTextView.text = it.cast
+            }
         }
     }
 
