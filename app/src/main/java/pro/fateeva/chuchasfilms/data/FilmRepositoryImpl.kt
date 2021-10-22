@@ -1,10 +1,20 @@
 package pro.fateeva.chuchasfilms.data
 
+import pro.fateeva.chuchasfilms.FilmsLoader
 import pro.fateeva.chuchasfilms.ui.main.Film
 
 class FilmRepositoryImpl : FilmRepository {
+
     override fun getFilmsFromServer(): List<Film> {
-        return emptyList()
+        val dto = FilmsLoader.loadFilms()
+
+        return dto?.results?.map { dto->
+            Film(
+                title = dto.title,
+                year = dto.release_date.substring(0,4),
+                rating = dto.vote_average.toString()
+            )
+        } ?: emptyList()
     }
 
     override fun getFilmsFromLocalStorage(): List<Film> {

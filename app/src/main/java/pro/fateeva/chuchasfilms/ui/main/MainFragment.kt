@@ -46,7 +46,7 @@ class MainFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
         viewModel.getLiveData().observe(viewLifecycleOwner, Observer { renderData(it) })
-        viewModel.getFilmsFromLocalSource()
+        viewModel.getFilmsFromRemoteSource()
 
         val popularFilmslayoutManager = LinearLayoutManager(
             requireContext(), LinearLayoutManager.HORIZONTAL, false
@@ -85,7 +85,7 @@ class MainFragment : Fragment() {
                 binding.root.showSnackbar(
                     R.string.error,
                     R.string.reload
-                ) { viewModel.getFilmsFromLocalSource() }
+                ) { viewModel.getFilmsFromRemoteSource() }
             }
             AppState.Loading -> {
                 binding.loadingLayout.visibility = View.VISIBLE
