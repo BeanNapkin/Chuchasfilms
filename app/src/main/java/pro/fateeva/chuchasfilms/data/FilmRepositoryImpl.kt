@@ -5,17 +5,9 @@ import pro.fateeva.chuchasfilms.ui.main.Film
 
 class FilmRepositoryImpl : FilmRepository {
 
-    override fun getFilmsFromServer(): List<Film> {
-        val dto = FilmsLoader.loadFilms()
+    private val mapper = FilmMapper()
 
-        return dto?.results?.map { dto->
-            Film(
-                title = dto.title,
-                year = dto.release_date.substring(0,4),
-                rating = dto.vote_average.toString()
-            )
-        } ?: emptyList()
-    }
+    override fun getFilmsFromServer(): List<Film> = mapper.map(FilmsLoader.loadFilms())
 
     override fun getFilmsFromLocalStorage(): List<Film> {
         val filmsList: List<Film> = listOf(
