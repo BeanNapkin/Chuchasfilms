@@ -17,7 +17,7 @@ class MainViewModel(
 
     fun getFilmsFromLocalSource() = getDataFromLocalSource()
 
-    fun getFilmsFromRemoteSource() = getDataFromLocalSource()
+    fun getFilmsFromRemoteSource() = getDataFromRemoteSource()
 
     private fun getDataFromLocalSource() {
         liveDataToObserve.value = AppState.Loading
@@ -27,9 +27,20 @@ class MainViewModel(
         }.start()
     }
 
-    private fun randomState(){
+    private fun getDataFromRemoteSource() {
+        liveDataToObserve.value = AppState.Loading
+        Thread {
+            try{
+                liveDataToObserve.postValue(AppState.Success(repositoryImpl.getFilmsFromServer()))
+            } catch (e: Exception){
+                liveDataToObserve.postValue(AppState.Error(e))
+            }
+        }.start()
+    }
+
+    private fun randomState() {
         val isError = Random.nextBoolean()
-        if (isError){
+        if (isError) {
             liveDataToObserve.postValue(AppState.Error(RuntimeException()))
         } else {
             liveDataToObserve.postValue(AppState.Success(repositoryImpl.getFilmsFromLocalStorage()))
