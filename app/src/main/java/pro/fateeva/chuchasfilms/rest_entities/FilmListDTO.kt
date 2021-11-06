@@ -8,6 +8,7 @@ data class FilmDTO(
     val title: String,
     val release_date: String,
     val vote_average: Double,
+    val poster_path: String
 ) : Serializable
 
 data class  FilmListDTO(

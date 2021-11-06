@@ -16,6 +16,9 @@ import javax.net.ssl.HttpsURLConnection
 
 object FilmsLoader {
     private const val API_KEY = "6db29454ef8c14f049f3447e4f978c60"
+    private const val FILM_COVER_SIZE = "w300"
+    private const val IMAGE_BASE_URL = "https://image.tmdb.org/t/p/"
+
     private val API = Retrofit.Builder()
         .baseUrl("https://api.themoviedb.org/")
         .addConverterFactory(
@@ -27,5 +30,9 @@ object FilmsLoader {
 
     fun loadFilms(): FilmListDTO? {
        return API.getFilmList(API_KEY).execute().body()
+    }
+
+    fun generateImagePath(path: String):String {
+        return "${IMAGE_BASE_URL}${FILM_COVER_SIZE}${path}"
     }
 }

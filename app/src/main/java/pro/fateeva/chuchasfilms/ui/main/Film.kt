@@ -10,7 +10,8 @@ data class Film(
     val rating: String? = null,
     val genre: String? = null,
     val description: String? = null,
-    val cast: String? = null
-): Parcelable
+    val cast: String? = null,
+    val posterPath: String? = null
+) : Parcelable
 
 
