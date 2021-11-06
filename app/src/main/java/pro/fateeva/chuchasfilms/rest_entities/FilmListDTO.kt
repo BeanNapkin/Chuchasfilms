@@ -1,5 +1,6 @@
 package pro.fateeva.chuchasfilms.rest_entities
 
+import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 import java.util.*
 
