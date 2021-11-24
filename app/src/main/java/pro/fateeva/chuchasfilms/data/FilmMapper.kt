@@ -15,8 +15,7 @@ class FilmMapper {
                 rating = dto.vote_average.toString(),
                 posterPath = dto.poster_path,
                 description = dto.overview,
-                genres = dto.genre_ids.
-
+                genres = dto.genre_ids.mapNotNull { genreId -> genres[genreId]?.name }
             )
         } ?: emptyList()
 
