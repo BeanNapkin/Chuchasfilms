@@ -7,6 +7,8 @@
     android:layout_margin="10dp"
     android:background="#FFFFFF"
     android:orientation="vertical"
+    android:focusable="true"
+    android:clickable="true"
     tools:context=".ui.main.AboutFilmFragment">
 
     <LinearLayout

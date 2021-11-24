@@ -10,7 +10,8 @@ class FilmMapper {
             Film(
                 title = dto.title,
                 year = dto.release_date.substring(0, 4),
-                rating = dto.vote_average.toString()
+                rating = dto.vote_average.toString(),
+                posterPath = dto.poster_path
             )
         } ?: emptyList()
     }

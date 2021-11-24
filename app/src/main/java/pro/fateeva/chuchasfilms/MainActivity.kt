@@ -1,13 +1,10 @@
 package pro.fateeva.chuchasfilms
 
-import android.content.Intent
 import android.content.IntentFilter
 import android.net.ConnectivityManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import pro.fateeva.chuchasfilms.ui.main.MainFragment
-import pro.fateeva.chuchasfilms.ui.main.MainServiceFragment
-import java.nio.channels.ConnectionPendingException
 
 class MainActivity : AppCompatActivity() {
 
@@ -18,7 +15,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.main_activity)
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
-                    .replace(R.id.container, MainServiceFragment.newInstance())
+                    .replace(R.id.container, MainFragment.newInstance())
                     .commitNow()
         }
         receiver = ConnectionBroadcastReceiver(findViewById(R.id.container))

@@ -8,6 +8,9 @@ class FilmRepositoryImpl : FilmRepository {
     private val mapper = FilmMapper()
 
     override fun getFilmsFromServer(): List<Film> = mapper.map(FilmsLoader.loadFilms())
+        .map {
+            it.copy(posterPath = FilmsLoader.generateImagePath(it.posterPath ?: ""))
+        }
 
     override fun getFilmsFromLocalStorage(): List<Film> {
         val filmsList: List<Film> = listOf(
