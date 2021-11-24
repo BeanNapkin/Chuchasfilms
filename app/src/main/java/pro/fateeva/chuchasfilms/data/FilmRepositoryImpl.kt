@@ -1,11 +1,16 @@
 package pro.fateeva.chuchasfilms.data
 
 import pro.fateeva.chuchasfilms.FilmsLoader
+import pro.fateeva.chuchasfilms.rest_entities.GenreDTO
+import pro.fateeva.chuchasfilms.rest_entities.GenreListDTO
 import pro.fateeva.chuchasfilms.ui.main.Film
+import pro.fateeva.chuchasfilms.ui.main.Genre
 
 class FilmRepositoryImpl : FilmRepository {
 
     private val mapper = FilmMapper()
+
+    override fun getGenresFromServer(): Map<Int, Genre> = mapper.map(FilmsLoader.loadGenres())
 
     override fun getFilmsFromServer(): List<Film> = mapper.map(FilmsLoader.loadFilms())
         .map {

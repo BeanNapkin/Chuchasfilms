@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import coil.api.load
 import pro.fateeva.chuchasfilms.R
 import pro.fateeva.chuchasfilms.databinding.AboutFilmFragmentBinding
 import pro.fateeva.chuchasfilms.databinding.MainFragmentBinding
@@ -34,6 +35,7 @@ class AboutFilmFragment : Fragment() {
                 ratingTextViewTextView.text = it.rating
                 descriptionTextViewTextView.text = it.description
                 castTextView.text = it.cast
+                coverImageView.load(it.posterPath)
             }
         }
     }

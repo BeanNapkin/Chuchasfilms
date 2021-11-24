@@ -5,6 +5,8 @@ import androidx.annotation.RequiresApi
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import pro.fateeva.chuchasfilms.rest_entities.FilmListDTO
+import pro.fateeva.chuchasfilms.rest_entities.GenreDTO
+import pro.fateeva.chuchasfilms.rest_entities.GenreListDTO
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.io.BufferedReader
@@ -32,7 +34,12 @@ object FilmsLoader {
        return API.getFilmList(API_KEY).execute().body()
     }
 
+    fun loadGenres(): GenreListDTO {
+        return API.getGenreList(API_KEY).execute().body() ?: GenreListDTO(emptyList())
+    }
+
     fun generateImagePath(path: String):String {
         return "${IMAGE_BASE_URL}${FILM_COVER_SIZE}${path}"
     }
+
 }
