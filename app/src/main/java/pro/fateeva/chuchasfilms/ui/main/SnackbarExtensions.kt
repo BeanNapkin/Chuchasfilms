@@ -14,13 +14,13 @@ object SnackbarExtensions {
         Snackbar
             .make(this, context.getString(message), Snackbar.LENGTH_INDEFINITE)
             .setAction(context.getString(buttonText), action)
-            .show()
+            .apply { show() }
 
     fun View.showSnackbar(
         @StringRes message: Int
     ) =
         Snackbar
             .make(this, context.getString(message), Snackbar.LENGTH_INDEFINITE)
-            .show()
+            .apply { show() }
 
 }

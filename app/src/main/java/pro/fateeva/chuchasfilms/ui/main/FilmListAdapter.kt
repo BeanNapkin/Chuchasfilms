@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
+import coil.api.load
 import pro.fateeva.chuchasfilms.R
 import pro.fateeva.chuchasfilms.databinding.FilmCellBinding
 import java.util.*
@@ -41,6 +42,7 @@ class FilmListAdapter(
                 movieTitleTextView.text = film.title
                 yearTextView.text = film.year
                 ratingTextView.text = film.rating
+                coverImageView.load(film.posterPath)
             }
             itemView.setOnClickListener { v: View? ->
                 onItemClick.invoke(
