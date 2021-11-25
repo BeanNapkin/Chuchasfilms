@@ -1,7 +1,7 @@
 package pro.fateeva.chuchasfilms.ui.main
 
-import android.app.ProgressDialog.show
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,8 +9,9 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.main.main_activity.view.*
+import androidx.recyclerview.widget.RecyclerView
+import kotlinx.android.synthetic.main.main_fragment.*
+import pro.fateeva.chuchasfilms.MovieTopList
 import pro.fateeva.chuchasfilms.R
 import pro.fateeva.chuchasfilms.databinding.MainFragmentBinding
 import pro.fateeva.chuchasfilms.ui.main.SnackbarExtensions.showSnackbar
@@ -45,35 +46,39 @@ class MainFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
-        viewModel.getLiveData().observe(viewLifecycleOwner, Observer { renderData(it) })
-        viewModel.getFilmsFromRemoteSource()
 
         val popularFilmslayoutManager = LinearLayoutManager(
             requireContext(), LinearLayoutManager.HORIZONTAL, false
         )
         val popularFilmList = binding.recyclerPopularFilmList
         popularFilmList.layoutManager = popularFilmslayoutManager
+        fillRecycleView(MovieTopList.POPULAR, recyclerPopularFilmList)
 
-//        val watchedNowFilmslayoutManager = LinearLayoutManager(
-//            requireContext(), LinearLayoutManager.HORIZONTAL, false
-//        )
-//        val watchedNowFilmList = binding.recyclerWatchedNowFilmList
-//        watchedNowFilmList.layoutManager = watchedNowFilmslayoutManager
-//        watchedNowFilmList.adapter = FilmListAdapter{film -> openFilmDetails(film)}
-//
-//        val waitedFilmslayoutManager = LinearLayoutManager(
-//            requireContext(), LinearLayoutManager.HORIZONTAL, false
-//        )
-//        val waitedFilmList = binding.recyclerWaitedFilmList
-//        waitedFilmList.layoutManager = waitedFilmslayoutManager
-//        waitedFilmList.adapter = FilmListAdapter{film -> openFilmDetails(film) }
+        val nowPlayingFilmslayoutManager = LinearLayoutManager(
+            requireContext(), LinearLayoutManager.HORIZONTAL, false
+        )
+        val nowPlayingFilmList = binding.recyclerNowPlayingFilmList
+        nowPlayingFilmList.layoutManager = nowPlayingFilmslayoutManager
+        fillRecycleView(MovieTopList.NOW_PLAYING, recyclerNowPlayingFilmList)
+
+        val upcomingFilmslayoutManager = LinearLayoutManager(
+            requireContext(), LinearLayoutManager.HORIZONTAL, false
+        )
+        val upcomingFilmList = binding.recyclerUpcomingFilmList
+        upcomingFilmList.layoutManager = upcomingFilmslayoutManager
+        fillRecycleView(MovieTopList.UPCOMING, recyclerUpcomingFilmList)
     }
 
-    private fun renderData(appState: AppState) {
+    private fun fillRecycleView(movieTopList: MovieTopList, recyclerView: RecyclerView){
+        viewModel.getMoviesData(movieTopList).observe(viewLifecycleOwner, Observer { renderData(it, movieTopList, recyclerView) })
+        viewModel.getFilmsFromRemoteSource(movieTopList)
+    }
+
+    private fun renderData(appState: AppState, movieTopList: MovieTopList, recyclerView: RecyclerView) {
         when (appState) {
             is AppState.Success -> {
                 binding.loadingLayout.visibility = View.GONE
-                binding.recyclerPopularFilmList.adapter =
+                recyclerView.adapter =
                     FilmListAdapter(appState.filmsList) { film ->
                         openFilmDetails(
                             film
@@ -81,11 +86,12 @@ class MainFragment : Fragment() {
                     }
             }
             is AppState.Error -> {
+                Log.e(null, "Ошибка при скачке фильмов", appState.error)
                 binding.loadingLayout.visibility = View.GONE
                 binding.root.showSnackbar(
                     R.string.error,
                     R.string.reload
-                ) { viewModel.getFilmsFromRemoteSource() }
+                ) { viewModel.getFilmsFromRemoteSource(movieTopList) }
             }
             AppState.Loading -> {
                 binding.loadingLayout.visibility = View.VISIBLE
