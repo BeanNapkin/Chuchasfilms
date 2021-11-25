@@ -1,15 +1,18 @@
 package pro.fateeva.chuchasfilms
 
+import com.google.gson.annotations.SerializedName
 import pro.fateeva.chuchasfilms.rest_entities.FilmListDTO
 import pro.fateeva.chuchasfilms.rest_entities.GenreDTO
 import pro.fateeva.chuchasfilms.rest_entities.GenreListDTO
 import retrofit2.Call
 import retrofit2.http.GET
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface FilmAPI {
-    @GET("3/discover/movie")
+    @GET("3/movie/{top}")
     fun getFilmList(
+        @Path("top") movieTopList: String,
         @Query("api_key") apiKey: String
     ): Call<FilmListDTO>
 
@@ -17,4 +20,10 @@ interface FilmAPI {
     fun getGenreList(
         @Query("api_key") apiKey: String
     ): Call<GenreListDTO>
+}
+
+enum class MovieTopList(val value: String) {
+    POPULAR("popular"),
+    UPCOMING("upcoming"),
+    NOW_PLAYING("now_playing")
 }

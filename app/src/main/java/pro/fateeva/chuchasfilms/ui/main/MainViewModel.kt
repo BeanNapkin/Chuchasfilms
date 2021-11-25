@@ -2,48 +2,38 @@ package pro.fateeva.chuchasfilms.ui.main
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import pro.fateeva.chuchasfilms.MovieTopList
 import pro.fateeva.chuchasfilms.data.FilmRepository
 import pro.fateeva.chuchasfilms.data.FilmRepositoryImpl
-import java.lang.Thread.sleep
-import kotlin.random.Random
 
 class MainViewModel(
-    private val liveDataToObserve: MutableLiveData<AppState> = MutableLiveData(),
     private val repositoryImpl: FilmRepository = FilmRepositoryImpl()
-) :
-    ViewModel() {
+) :    ViewModel() {
 
-    fun getLiveData() = liveDataToObserve
+    private val popularMoviesLiveData: MutableLiveData<AppState> = MutableLiveData()
+    private val nowPlayingMoviesLiveData: MutableLiveData<AppState> = MutableLiveData()
+    private val upcomingMoviesLiveData: MutableLiveData<AppState> = MutableLiveData()
 
-    fun getFilmsFromLocalSource() = getDataFromLocalSource()
+    fun getFilmsFromRemoteSource(movieTopList: MovieTopList) = getDataFromRemoteSource(movieTopList)
 
-    fun getFilmsFromRemoteSource() = getDataFromRemoteSource()
+    private fun getDataFromRemoteSource(movieTopList: MovieTopList) {
 
-    private fun getDataFromLocalSource() {
-        liveDataToObserve.value = AppState.Loading
-        Thread {
-            sleep(1000)
-            randomState()
-        }.start()
-    }
+        val liveData = getMoviesData(movieTopList)
 
-    private fun getDataFromRemoteSource() {
-        liveDataToObserve.value = AppState.Loading
+        liveData.value = AppState.Loading
         Thread {
             try{
-                liveDataToObserve.postValue(AppState.Success(repositoryImpl.getFilmsFromServer()))
+                liveData.postValue(AppState.Success(repositoryImpl.getFilmsFromServer(movieTopList)))
             } catch (e: Exception){
-                liveDataToObserve.postValue(AppState.Error(e))
+                liveData.postValue(AppState.Error(e))
             }
         }.start()
     }
 
-    private fun randomState() {
-        val isError = Random.nextBoolean()
-        if (isError) {
-            liveDataToObserve.postValue(AppState.Error(RuntimeException()))
-        } else {
-            liveDataToObserve.postValue(AppState.Success(repositoryImpl.getFilmsFromLocalStorage()))
-        }
+    fun getMoviesData(movieTopList: MovieTopList) = when(movieTopList) {
+        MovieTopList.POPULAR -> popularMoviesLiveData
+        MovieTopList.NOW_PLAYING -> nowPlayingMoviesLiveData
+        MovieTopList.UPCOMING -> upcomingMoviesLiveData
     }
+
 }
