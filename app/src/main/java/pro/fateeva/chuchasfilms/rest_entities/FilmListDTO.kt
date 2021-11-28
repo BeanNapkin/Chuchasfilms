@@ -5,7 +5,9 @@ import java.io.Serializable
 import java.util.*
 
 data class FilmDTO(
+    val id: Long,
     val title: String,
+    val adult: Boolean,
     val release_date: String,
     val vote_average: Double,
     val poster_path: String,

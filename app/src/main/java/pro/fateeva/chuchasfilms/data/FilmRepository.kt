@@ -8,5 +8,4 @@ import pro.fateeva.chuchasfilms.ui.main.Genre
 interface FilmRepository {
     fun getGenresFromServer(): Map<Int, Genre>
     fun getFilmsFromServer(movieTopList: MovieTopList): List<Film>
-    fun getFilmsFromLocalStorage(): List<Film>
 }

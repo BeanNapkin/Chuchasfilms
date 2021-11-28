@@ -6,11 +6,12 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="10dp"
+    android:padding="10dp"
+    android:clipToPadding="false"
     android:orientation="vertical"
     tools:context=".ui.main.MainFragment">
 
-    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    <ScrollView
         android:id="@+id/scroll"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">

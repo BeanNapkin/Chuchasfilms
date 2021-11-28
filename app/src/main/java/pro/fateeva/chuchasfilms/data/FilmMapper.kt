@@ -10,7 +10,9 @@ class FilmMapper {
     fun map(filmListDTO: FilmListDTO?, genres: Map<Int, Genre>): List<Film> =
         filmListDTO?.results?.map { dto ->
             Film(
+                id = dto.id,
                 title = dto.title,
+                isAdult = dto.adult,
                 year = dto.release_date.substring(0, 4),
                 rating = dto.vote_average.toString(),
                 posterPath = dto.poster_path,
