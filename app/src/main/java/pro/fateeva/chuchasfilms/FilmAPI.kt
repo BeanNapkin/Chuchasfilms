@@ -22,7 +22,7 @@ interface FilmAPI {
     ): Call<GenreListDTO>
 }
 
-enum class MovieTopList(val value: String) {
+enum class MovieTopList(val value: String) { // Пути для запросов для скачивания списков фильмов и также, чтобы понять по скачке какого-списка обновлять livedata (AppState)
     POPULAR("popular"),
     UPCOMING("upcoming"),
     NOW_PLAYING("now_playing")

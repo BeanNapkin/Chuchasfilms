@@ -20,7 +20,7 @@ class MainFragment : Fragment() {
     private var _binding: MainFragmentBinding? = null
     private val binding get() = _binding!!
 
-    companion object {
+    companion object { // Статическая часть класса. Та, которой не нужен объект для работы.
         fun newInstance() = MainFragment()
     }
 
@@ -70,39 +70,39 @@ class MainFragment : Fragment() {
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
-        inflater.inflate(R.menu.main_menu, menu)
-        menu.findItem(R.id.switchAdultFilms).isChecked = viewModel.getAdultFilmsPreference(requireContext())
+        inflater.inflate(R.menu.main_menu, menu) // Добавить меню из рамзетки в меню в аргументах
+        menu.findItem(R.id.switchAdultFilms).isChecked = viewModel.getAdultFilmsPreference(requireContext()) // Проставить (или убрать) галочку из Preferences насчёт Фильмов 18+
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == R.id.switchAdultFilms){
-            if (item.isChecked){
+    override fun onOptionsItemSelected(item: MenuItem): Boolean { // Клики по пунктам меню
+        if (item.itemId == R.id.switchAdultFilms){ // Убеждаемся, что пункт меню именно тот, что нужен (чек бокс про Фильмы 18+)
+            if (item.isChecked){ // Если галочка уже была, то убираем её
                 item.isChecked = false
             } else {
-                item.isChecked = true
+                item.isChecked = true // Если галочки нет, то ставим её
             }
 
-            viewModel.saveAdultFilmsPreference(requireContext(), item.isChecked)
-            refresh()
+            viewModel.saveAdultFilmsPreference(requireContext(), item.isChecked) // Сохраняем настройки галочки в Preferences
+            refresh() // Обновляем списки фильмов
         }
         return super.onOptionsItemSelected(item)
     }
 
-    private fun refresh() {
+    private fun refresh() { // Заполнение или перезаполнение всех recyclerView фильмами
         fillRecycleView(MovieTopList.POPULAR, recyclerPopularFilmList)
         fillRecycleView(MovieTopList.NOW_PLAYING, recyclerNowPlayingFilmList)
         fillRecycleView(MovieTopList.UPCOMING, recyclerUpcomingFilmList)
     }
 
     private fun fillRecycleView(movieTopList: MovieTopList, recyclerView: RecyclerView) {
-        viewModel.getMoviesData(movieTopList).observe(viewLifecycleOwner, Observer {
-            renderData(
-                it,
-                movieTopList,
-                recyclerView
+        viewModel.getMoviesData(movieTopList).observe(viewLifecycleOwner, Observer { // Подписка на изменение состояния AppState в результате скачивания фильмов
+            renderData( // Выполнится, когда придёт какой-то Appstate. Это отрисовака списков
+                it, // Состояние Appstate, которое пришло по подписке
+                movieTopList, // Какой лист
+                recyclerView // Какой ресайклвью
             )
         })
-        viewModel.getFilmsFromRemoteSource(movieTopList, requireContext())
+        viewModel.getFilmsFromRemoteSource(movieTopList, requireContext()) // Запуск скачивания фильмов - ЭТО ВЫПОЛНИТСЯ ПЕРВЫМ В ЭТОЙ ФУНКЦИИ!
     }
 
     private fun renderData(
@@ -111,24 +111,24 @@ class MainFragment : Fragment() {
         recyclerView: RecyclerView
     ) {
         when (appState) {
-            is AppState.Success -> {
-                binding.loadingLayout.visibility = View.GONE
+            is AppState.Success -> { // Если успешно, то отрисовываем список фильмов, который лежит в Appstate
+                binding.loadingLayout.visibility = View.GONE // Убираем кружок-загрузки
                 recyclerView.adapter =
-                    FilmListAdapter(appState.filmsList) { film ->
-                        openFilmDetails(
+                    FilmListAdapter(appState.filmsList) { film -> // Тут скаченный список фильмов попадает в отрисовку в ресайклвью
+                        openFilmDetails( // Клик по фильму - открытие фрагмента с "О фильме"
                             film
                         )
                     }
             }
-            is AppState.Error -> {
+            is AppState.Error -> { // Если ошибка
                 Log.e(null, "Ошибка при скачке фильмов", appState.error)
-                binding.loadingLayout.visibility = View.GONE
-                binding.root.showSnackbar(
+                binding.loadingLayout.visibility = View.GONE // Убираем кружок-загрузки
+                binding.root.showSnackbar( // Показываем ошибку
                     R.string.error,
-                    R.string.reload
-                ) { viewModel.getFilmsFromRemoteSource(movieTopList, requireContext()) }
+                    R.string.reload // С кнопкой "Попробовать скачать фильмы снова"
+                ) { viewModel.getFilmsFromRemoteSource(movieTopList, requireContext()) } // Пробуем снова скачать
             }
-            AppState.Loading -> {
+            AppState.Loading -> { // Если загрузка, то показываем кружок-загрузки
                 binding.loadingLayout.visibility = View.VISIBLE
             }
         }

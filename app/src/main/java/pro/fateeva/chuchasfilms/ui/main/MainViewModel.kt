@@ -14,29 +14,29 @@ class MainViewModel(
     private val preferencesRepository: PreferencesRepository = PreferencesRepositoryImpl()
 ) :    ViewModel() {
 
-    private val popularMoviesLiveData: MutableLiveData<AppState> = MutableLiveData()
-    private val nowPlayingMoviesLiveData: MutableLiveData<AppState> = MutableLiveData()
+    private val popularMoviesLiveData: MutableLiveData<AppState> = MutableLiveData() // livedata - канал новостей. Он делает из Appstate - объект для наблюдения, чтобы потом пинались те, кто подписан на изменения
+    private val nowPlayingMoviesLiveData: MutableLiveData<AppState> = MutableLiveData() // Для каждого списка - свой канал новостей
     private val upcomingMoviesLiveData: MutableLiveData<AppState> = MutableLiveData()
 
     fun getFilmsFromRemoteSource(movieTopList: MovieTopList, context: Context) = getDataFromRemoteSource(movieTopList, context)
 
     private fun getDataFromRemoteSource(movieTopList: MovieTopList, context: Context) {
-        val liveData = getMoviesData(movieTopList)
+        val liveData = getMoviesData(movieTopList) // Какой список будем скачивать и в какой AppState складывать результат скачивания
 
-        liveData.value = AppState.Loading
-        Thread {
+        liveData.value = AppState.Loading // AppState - состояние загрузки
+        Thread { // Отдельный поток, в котором будет загрузка фильмов
             try{
-                val filmList = filmRepository.getFilmsFromServer(movieTopList).filter{
+                val filmList = filmRepository.getFilmsFromServer(movieTopList).filter{ // Скачиваем спискок фильмов + фильтр для фильмов насчёт 18+
                     val isAdultFromPreferences = getAdultFilmsPreference(context)
-                    if (isAdultFromPreferences == false && it.isAdult == true){
-                        false
+                    if (isAdultFromPreferences == false && it.isAdult == true){ // Если в настройках нет галочки и фильм для взрослых
+                        false // То выкидываем его из списка
                     } else {
-                        true
+                        true // В остальных всех случаях фильм остается в списке
                     }
                 }
-                liveData.postValue(AppState.Success(filmList))
+                liveData.postValue(AppState.Success(filmList)) // Фильмы скачались успешно, кладем в AppState список
             } catch (e: Exception){
-                liveData.postValue(AppState.Error(e))
+                liveData.postValue(AppState.Error(e)) // Передаем ошибку, если фильмы не скачались, также в AppState
             }
         }.start()
     }
