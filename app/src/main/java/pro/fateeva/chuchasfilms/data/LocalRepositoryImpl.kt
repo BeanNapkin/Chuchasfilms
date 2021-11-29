@@ -1,30 +1,29 @@
 package pro.fateeva.chuchasfilms.data
 
-import pro.fateeva.chuchasfilms.room.HistoryDao
-import pro.fateeva.chuchasfilms.room.HistoryEntity
-import pro.fateeva.chuchasfilms.ui.main.Film
+import pro.fateeva.chuchasfilms.room.FilmDetailsDao
+import pro.fateeva.chuchasfilms.room.FilmLocalData
 import java.util.*
 
-class LocalRepositoryImpl(private val localDataSource: HistoryDao) : LocalRepository {
-    override fun getAllHistory(): List<HistoryEntity> {
+class LocalRepositoryImpl(private val localDataSource: FilmDetailsDao) : LocalRepository {
+    override fun getAllFilms(): List<FilmLocalData> {
         return localDataSource.all()
     }
 
     override fun saveEntity(id: Long, note: String?) {
-        var historyEntity = localDataSource.getHistoryById(id)
-        if (historyEntity != null) {
+        var film = localDataSource.getById(id)
+        if (film != null) {
             if (note != null) {
-                historyEntity.noteAboutFilm = note
+                film.noteAboutFilm = note
             }
-            historyEntity.viewDate = Date()
-            localDataSource.update(historyEntity)
+            film.viewDate = Date()
+            localDataSource.update(film)
         } else {
-            historyEntity = HistoryEntity(id, note, Date())
-            localDataSource.insert(historyEntity)
+            film = FilmLocalData(id, note, Date())
+            localDataSource.insert(film)
         }
     }
 
-    override fun getHistoryById(id: Long): HistoryEntity? {
-        return localDataSource.getHistoryById(id)
+    override fun getFilmById(id: Long): FilmLocalData? {
+        return localDataSource.getById(id)
     }
 }

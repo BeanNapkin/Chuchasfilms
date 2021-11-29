@@ -7,7 +7,7 @@ import java.util.*
 
 @Entity
 @TypeConverters(DateConverter::class)
-data class HistoryEntity(
+data class FilmLocalData(
     @PrimaryKey
     val id: Long,
     var noteAboutFilm: String?,

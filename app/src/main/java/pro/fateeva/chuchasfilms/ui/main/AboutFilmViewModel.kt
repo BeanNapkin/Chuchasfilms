@@ -7,7 +7,7 @@ import pro.fateeva.chuchasfilms.data.LocalRepository
 import pro.fateeva.chuchasfilms.data.LocalRepositoryImpl
 
 class AboutFilmViewModel(
-    private val localRepository: LocalRepository = LocalRepositoryImpl(App.getHistoryDao())
+    private val localRepository: LocalRepository = LocalRepositoryImpl(App.getFilmDetailsDao())
 ) :    ViewModel() {
 
     private val historyLiveData: MutableLiveData<AboutState> = MutableLiveData()
@@ -23,7 +23,7 @@ class AboutFilmViewModel(
     fun getHistory(id: Long) {
         Thread {
             try{
-                val historyEntity = localRepository.getHistoryById(id)
+                val historyEntity = localRepository.getFilmById(id)
                 historyLiveData.postValue(AboutState.Success(historyEntity))
             } catch (e: Exception){
                 historyLiveData.postValue(AboutState.Error(e))

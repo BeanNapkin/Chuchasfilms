@@ -1,10 +1,9 @@
 package pro.fateeva.chuchasfilms.data
 
-import pro.fateeva.chuchasfilms.room.HistoryEntity
-import pro.fateeva.chuchasfilms.ui.main.Film
+import pro.fateeva.chuchasfilms.room.FilmLocalData
 
 interface LocalRepository {
-    fun getAllHistory(): List<HistoryEntity>
+    fun getAllFilms(): List<FilmLocalData>
     fun saveEntity(id: Long, note: String? = null)
-    fun getHistoryById(id: Long) : HistoryEntity?
+    fun getFilmById(id: Long) : FilmLocalData?
 }
