@@ -3,14 +3,19 @@ package pro.fateeva.chuchasfilms.ui.main
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import coil.api.load
 import kotlinx.android.synthetic.main.about_film_fragment.*
+import pro.fateeva.chuchasfilms.R
 import pro.fateeva.chuchasfilms.databinding.AboutFilmFragmentBinding
+import pro.fateeva.chuchasfilms.ui.main.SnackbarExtensions.showSnackbar
+import java.util.concurrent.ExecutionException
 
 class AboutFilmFragment : Fragment() {
 
@@ -43,7 +48,22 @@ class AboutFilmFragment : Fragment() {
             }
         }
 
-        noteEditText.setText(viewModel.getHistory(film.id)?.noteAboutFilm)
+        viewModel.getHistoryLiveData().observe(viewLifecycleOwner, Observer {
+            when(it){
+                is AboutState.Success ->
+                    noteEditText.setText(it.historyEntity?.noteAboutFilm)
+                is AboutState.Error -> {
+                    Log.e(null, "Ошибка при загрузке истории", it.error)
+                    binding.root.showSnackbar(
+                        R.string.error,
+                        R.string.reload
+                    ) { viewModel.getHistory(film.id) }
+                }
+            }
+        })
+
+        viewModel.getHistory(film.id)
+
         viewModel.saveFilmToViewed(film.id)
 
         noteEditText.addTextChangedListener(object : TextWatcher {
@@ -56,8 +76,6 @@ class AboutFilmFragment : Fragment() {
             }
         })
     }
-
-
 
     companion object {
         const val BUNDLE_EXTRA = "film"
