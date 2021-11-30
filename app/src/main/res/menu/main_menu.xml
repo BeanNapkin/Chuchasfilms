@@ -7,4 +7,8 @@
         android:title="Фильмы 18+"
         android:checkable="true" />
 
+    <item
+        android:id="@+id/favouriteFilms"
+        android:title="Избранные фильмы"/>
+
 </menu>

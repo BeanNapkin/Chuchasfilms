@@ -4,9 +4,7 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -15,7 +13,6 @@ import kotlinx.android.synthetic.main.about_film_fragment.*
 import pro.fateeva.chuchasfilms.R
 import pro.fateeva.chuchasfilms.databinding.AboutFilmFragmentBinding
 import pro.fateeva.chuchasfilms.ui.main.SnackbarExtensions.showSnackbar
-import java.util.concurrent.ExecutionException
 
 class AboutFilmFragment : Fragment() {
 
@@ -51,7 +48,7 @@ class AboutFilmFragment : Fragment() {
         viewModel.getHistoryLiveData().observe(viewLifecycleOwner, Observer {
             when(it){
                 is AboutState.Success ->
-                    noteEditText.setText(it.historyEntity?.noteAboutFilm)
+                    noteEditText.setText(it.filmLocalData?.noteAboutFilm)
                 is AboutState.Error -> {
                     Log.e(null, "Ошибка при загрузке истории", it.error)
                     binding.root.showSnackbar(
@@ -75,6 +72,20 @@ class AboutFilmFragment : Fragment() {
                 viewModel.saveNote(film, s.toString())
             }
         })
+
+        setHasOptionsMenu(true)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.about_film_menu, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == R.id.favourite){
+            viewModel.saveFilmToFavourite(film)
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     companion object {

@@ -20,6 +20,10 @@ class AboutFilmViewModel(
         localRepository.saveEntity(id)
     }
 
+    fun saveFilmToFavourite(film: Film){
+        localRepository.saveEntity(id = film.id, isFavourite = true)
+    }
+
     fun getHistory(id: Long) {
         Thread {
             try{

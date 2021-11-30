@@ -16,4 +16,11 @@ class FilmRepositoryImpl : FilmRepository {
             .map {
                 it.copy(posterPath = FilmsLoader.generateImagePath(it.posterPath ?: ""))
             }
+
+    override fun getFilmById(id: Long): Film =
+        mapper.mapFilm(
+            FilmsLoader.loadFilmById(id) ?: error("Film with id $id not found"),
+            getGenresFromServer()
+        )
+            .let { it.copy(posterPath = FilmsLoader.generateImagePath(it.posterPath ?: "")) }
 }

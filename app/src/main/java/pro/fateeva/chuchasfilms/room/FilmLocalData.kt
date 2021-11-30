@@ -11,5 +11,6 @@ data class FilmLocalData(
     @PrimaryKey
     val id: Long,
     var noteAboutFilm: String?,
-    var viewDate: Date?
+    var viewDate: Date?,
+    var isFavourite: Boolean?
 )

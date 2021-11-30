@@ -85,6 +85,10 @@ class MainFragment : Fragment() {
             viewModel.saveAdultFilmsPreference(requireContext(), item.isChecked)
             refresh()
         }
+
+        if (item.itemId == R.id.favouriteFilms){
+            openFavouriteFilmsFragment()
+        }
         return super.onOptionsItemSelected(item)
     }
 
@@ -139,6 +143,13 @@ class MainFragment : Fragment() {
         bundle.putParcelable(AboutFilmFragment.BUNDLE_EXTRA, film)
         parentFragmentManager.beginTransaction()
             .add(R.id.container, AboutFilmFragment.newInstance(bundle))
+            .addToBackStack(null)
+            .commitAllowingStateLoss()
+    }
+
+    private fun openFavouriteFilmsFragment() {
+        parentFragmentManager.beginTransaction()
+            .add(R.id.container, FavouriteFilmsFragment.newInstance())
             .addToBackStack(null)
             .commitAllowingStateLoss()
     }

@@ -89,7 +89,7 @@
                     android:id="@+id/castTextView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Брюс Уиллис, Брюс Уиллис,Брюс Уиллис,Брюс Уиллис" />
+                    android:text="" />
             </LinearLayout>
 
         </LinearLayout>
