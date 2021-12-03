@@ -89,6 +89,10 @@ class MainFragment : Fragment() {
         if (item.itemId == R.id.favouriteFilms){
             openFavouriteFilmsFragment()
         }
+
+        if (item.itemId == R.id.contacts){
+            openContactsFragment()
+        }
         return super.onOptionsItemSelected(item)
     }
 
@@ -150,6 +154,13 @@ class MainFragment : Fragment() {
     private fun openFavouriteFilmsFragment() {
         parentFragmentManager.beginTransaction()
             .add(R.id.container, FavouriteFilmsFragment.newInstance())
+            .addToBackStack(null)
+            .commitAllowingStateLoss()
+    }
+
+    private fun openContactsFragment() {
+        parentFragmentManager.beginTransaction()
+            .add(R.id.container, ContactsFragment.newInstance())
             .addToBackStack(null)
             .commitAllowingStateLoss()
     }
