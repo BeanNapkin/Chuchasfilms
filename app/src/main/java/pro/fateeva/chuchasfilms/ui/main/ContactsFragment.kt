@@ -3,8 +3,10 @@ package pro.fateeva.chuchasfilms.ui.main
 import android.Manifest
 import android.content.ContentResolver
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.database.Cursor
+import android.net.Uri
 import android.os.Bundle
 import android.provider.ContactsContract
 import androidx.fragment.app.Fragment
@@ -20,19 +22,28 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import pro.fateeva.chuchasfilms.R
 import pro.fateeva.chuchasfilms.databinding.ContactsFragmentBinding
+import java.security.Permission
 
 class ContactsFragment : Fragment() {
 
     private var _binding: ContactsFragmentBinding? = null
     private val binding get() = _binding!!
 
-    private val permissionResult = registerForActivityResult(ActivityResultContracts.RequestPermission()){ result ->
-        if(result){
-            getContacts()
-        } else {
-            Toast.makeText(context, "Need permission", Toast.LENGTH_SHORT)
+    private val permissionResult =
+        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { result ->
+            var allPermissionsGranted = true
+            for ((_, value) in result) {
+                if (value.not()) {
+                    allPermissionsGranted = false
+                }
+            }
+
+            if (allPermissionsGranted) {
+                getContacts()
+            } else {
+                Toast.makeText(context, "Need permissions", Toast.LENGTH_SHORT)
+            }
         }
-    }
 
     companion object {
         fun newInstance() = ContactsFragment()
@@ -59,20 +70,16 @@ class ContactsFragment : Fragment() {
     }
 
     private fun checkPermission() {
-        context?.let { notNullContext ->
-            when (PackageManager.PERMISSION_GRANTED){
-                ContextCompat.checkSelfPermission(notNullContext, Manifest.permission.READ_CONTACTS) -> {
-                    getContacts()
-            }
-                else -> {
-                    requestPermission()
-                }
-            }
-        }
+        requestPermission()
     }
 
     private fun requestPermission() {
-        permissionResult.launch(Manifest.permission.READ_CONTACTS)
+        permissionResult.launch(
+            arrayOf(
+                Manifest.permission.READ_CONTACTS,
+                Manifest.permission.CALL_PHONE
+            )
+        )
     }
 
     private fun getContacts() {
@@ -81,11 +88,11 @@ class ContactsFragment : Fragment() {
             val contentResolver: ContentResolver = it.contentResolver
             // Отправляем запрос на получение контактов и получаем ответ в виде Cursor
             val cursorWithContacts: Cursor? = contentResolver.query(
-                ContactsContract.Contacts.CONTENT_URI,
+                ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
                 null,
                 null,
                 null,
-                ContactsContract.Contacts.DISPLAY_NAME + " ASC"
+                ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC"
             )
 
             cursorWithContacts?.let { cursor ->
@@ -94,8 +101,10 @@ class ContactsFragment : Fragment() {
                     if (cursor.moveToPosition(i)) {
                         // Берём из Cursor столбец с именем
                         val name =
-                            cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME))
-                        addView(it, name)
+                            cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME))
+                        val phone =
+                            cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER))
+                        addView(it, name, phone)
                     }
                 }
             }
@@ -103,10 +112,16 @@ class ContactsFragment : Fragment() {
         }
     }
 
-    private fun addView(context: Context, textToShow: String)  {
+    private fun addView(context: Context, textToShow: String, phone: String) {
         binding.containerForContacts.addView(TextView(context).apply {
             text = textToShow
             textSize = resources.getDimension(R.dimen.main_container_text_size)
+            setOnClickListener {
+                val intent = Intent(Intent.ACTION_CALL);
+                intent.data = Uri.parse("tel:$phone")
+                startActivity(intent)
+            }
+
         })
     }
 }
