@@ -63,6 +63,12 @@ class MainFragment : Fragment() {
         val upcomingFilmList = binding.recyclerUpcomingFilmList
         upcomingFilmList.layoutManager = upcomingFilmslayoutManager
 
+        val genresFilterButtons = binding.recyclerGenres
+        genresFilterButtons.adapter =
+            GenresFilterAdapter(GenreEnum.values().toList()) { genre ->
+
+            }
+
         refresh()
 
         setHasOptionsMenu(true)

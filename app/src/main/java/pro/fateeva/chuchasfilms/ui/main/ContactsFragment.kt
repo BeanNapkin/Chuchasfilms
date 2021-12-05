@@ -121,7 +121,6 @@ class ContactsFragment : Fragment() {
                 intent.data = Uri.parse("tel:$phone")
                 startActivity(intent)
             }
-
         })
     }
 }
