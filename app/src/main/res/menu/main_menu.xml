@@ -17,4 +17,10 @@
         android:title="Контакты"
         app:showAsAction="always"/>
 
+    <item
+        android:id="@+id/map"
+        android:icon="@drawable/ic_baseline_location_on_24"
+        android:title="Карты"
+        app:showAsAction="always"/>
+
 </menu>
