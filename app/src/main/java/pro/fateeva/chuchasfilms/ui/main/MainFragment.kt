@@ -2,9 +2,7 @@ package pro.fateeva.chuchasfilms.ui.main
 
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -52,29 +50,70 @@ class MainFragment : Fragment() {
         )
         val popularFilmList = binding.recyclerPopularFilmList
         popularFilmList.layoutManager = popularFilmslayoutManager
-        fillRecycleView(MovieTopList.POPULAR, recyclerPopularFilmList)
 
         val nowPlayingFilmslayoutManager = LinearLayoutManager(
             requireContext(), LinearLayoutManager.HORIZONTAL, false
         )
         val nowPlayingFilmList = binding.recyclerNowPlayingFilmList
         nowPlayingFilmList.layoutManager = nowPlayingFilmslayoutManager
-        fillRecycleView(MovieTopList.NOW_PLAYING, recyclerNowPlayingFilmList)
 
         val upcomingFilmslayoutManager = LinearLayoutManager(
             requireContext(), LinearLayoutManager.HORIZONTAL, false
         )
         val upcomingFilmList = binding.recyclerUpcomingFilmList
         upcomingFilmList.layoutManager = upcomingFilmslayoutManager
+
+        refresh()
+
+        setHasOptionsMenu(true)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.main_menu, menu)
+        menu.findItem(R.id.switchAdultFilms).isChecked = viewModel.getAdultFilmsPreference(requireContext())
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == R.id.switchAdultFilms){
+            if (item.isChecked){
+                item.isChecked = false
+            } else {
+                item.isChecked = true
+            }
+
+            viewModel.saveAdultFilmsPreference(requireContext(), item.isChecked)
+            refresh()
+        }
+
+        if (item.itemId == R.id.favouriteFilms){
+            openFavouriteFilmsFragment()
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    private fun refresh() {
+        fillRecycleView(MovieTopList.POPULAR, recyclerPopularFilmList)
+        fillRecycleView(MovieTopList.NOW_PLAYING, recyclerNowPlayingFilmList)
         fillRecycleView(MovieTopList.UPCOMING, recyclerUpcomingFilmList)
     }
 
-    private fun fillRecycleView(movieTopList: MovieTopList, recyclerView: RecyclerView){
-        viewModel.getMoviesData(movieTopList).observe(viewLifecycleOwner, Observer { renderData(it, movieTopList, recyclerView) })
-        viewModel.getFilmsFromRemoteSource(movieTopList)
+    private fun fillRecycleView(movieTopList: MovieTopList, recyclerView: RecyclerView) {
+        viewModel.getMoviesData(movieTopList).observe(viewLifecycleOwner, Observer {
+            renderData(
+                it,
+                movieTopList,
+                recyclerView
+            )
+        })
+        viewModel.getFilmsFromRemoteSource(movieTopList, requireContext())
     }
 
-    private fun renderData(appState: AppState, movieTopList: MovieTopList, recyclerView: RecyclerView) {
+    private fun renderData(
+        appState: AppState,
+        movieTopList: MovieTopList,
+        recyclerView: RecyclerView
+    ) {
         when (appState) {
             is AppState.Success -> {
                 binding.loadingLayout.visibility = View.GONE
@@ -91,7 +130,7 @@ class MainFragment : Fragment() {
                 binding.root.showSnackbar(
                     R.string.error,
                     R.string.reload
-                ) { viewModel.getFilmsFromRemoteSource(movieTopList) }
+                ) { viewModel.getFilmsFromRemoteSource(movieTopList, requireContext()) }
             }
             AppState.Loading -> {
                 binding.loadingLayout.visibility = View.VISIBLE
@@ -104,6 +143,13 @@ class MainFragment : Fragment() {
         bundle.putParcelable(AboutFilmFragment.BUNDLE_EXTRA, film)
         parentFragmentManager.beginTransaction()
             .add(R.id.container, AboutFilmFragment.newInstance(bundle))
+            .addToBackStack(null)
+            .commitAllowingStateLoss()
+    }
+
+    private fun openFavouriteFilmsFragment() {
+        parentFragmentManager.beginTransaction()
+            .add(R.id.container, FavouriteFilmsFragment.newInstance())
             .addToBackStack(null)
             .commitAllowingStateLoss()
     }

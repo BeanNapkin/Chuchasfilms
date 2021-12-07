@@ -3,6 +3,7 @@ package pro.fateeva.chuchasfilms
 import com.google.gson.GsonBuilder
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import pro.fateeva.chuchasfilms.rest_entities.FilmDTO
 import pro.fateeva.chuchasfilms.rest_entities.FilmListDTO
 import pro.fateeva.chuchasfilms.rest_entities.GenreListDTO
 import retrofit2.Retrofit
@@ -36,6 +37,10 @@ object FilmsLoader {
 
     fun loadFilms(movieTopList: MovieTopList): FilmListDTO? {
        return API.getFilmList(movieTopList.value, API_KEY).execute().body()
+    }
+
+    fun loadFilmById(id: Long): FilmDTO? {
+        return API.getFilm(id, API_KEY).execute().body()
     }
 
     fun loadGenres(): GenreListDTO {

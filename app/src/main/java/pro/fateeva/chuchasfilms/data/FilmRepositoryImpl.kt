@@ -17,57 +17,10 @@ class FilmRepositoryImpl : FilmRepository {
                 it.copy(posterPath = FilmsLoader.generateImagePath(it.posterPath ?: ""))
             }
 
-    override fun getFilmsFromLocalStorage(): List<Film> {
-        val filmsList: List<Film> = listOf(
-            Film(
-                title = "5й элемент",
-                year = "2000",
-                rating = "95",
-                genres = listOf("Боевик"),
-                description = "Бла-бла-бла",
-                cast = "Брюс"
-            ),
-            Film(
-                title = "6й элемент",
-                year = "2000",
-                rating = "95",
-                genres = listOf("Боевик"),
-                description = "Бла-бла-бла",
-                cast = "Брюс"
-            ),
-            Film(
-                title = "7й элемент",
-                year = "2000",
-                rating = "95",
-                genres = listOf("Боевик"),
-                description = "Бла-бла-бла",
-                cast = "Брюс"
-            ),
-            Film(
-                title = "8й элемент",
-                year = "2000",
-                rating = "95",
-                genres = listOf("Боевик"),
-                description = "Бла-бла-бла",
-                cast = "Брюс"
-            ),
-            Film(
-                title = "9й элемент",
-                year = "2000",
-                rating = "95",
-                genres = listOf("Боевик"),
-                description = "Бла-бла-бла",
-                cast = "Брюс"
-            ),
-            Film(
-                title = "10й элемент",
-                year = "2000",
-                rating = "95",
-                genres = listOf("Боевик"),
-                description = "Бла-бла-бла",
-                cast = "Брюс"
-            ),
+    override fun getFilmById(id: Long): Film =
+        mapper.mapFilm(
+            FilmsLoader.loadFilmById(id) ?: error("Film with id $id not found"),
+            getGenresFromServer()
         )
-        return filmsList
-    }
+            .let { it.copy(posterPath = FilmsLoader.generateImagePath(it.posterPath ?: "")) }
 }
