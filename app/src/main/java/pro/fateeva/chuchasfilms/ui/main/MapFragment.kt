@@ -22,7 +22,9 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
 import kotlinx.android.synthetic.main.map_fragment.*
 import pro.fateeva.chuchasfilms.R
+import pro.fateeva.chuchasfilms.app.App
 import pro.fateeva.chuchasfilms.databinding.MapFragmentBinding
+import pro.fateeva.chuchasfilms.geofences.Reminder
 import java.io.IOException
 
 class MapFragment : Fragment() {
@@ -37,8 +39,16 @@ class MapFragment : Fragment() {
     }
 
     private val permissionResult =
-        registerForActivityResult(ActivityResultContracts.RequestPermission()) { result ->
-            if (!result) {
+        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { result ->
+            var allPermissionsGranted = true
+
+            for ((_, value) in result) {
+                if (value.not()) {
+                    allPermissionsGranted = false
+                }
+            }
+
+            if (!allPermissionsGranted) {
                 Toast.makeText(context, "Need permission", Toast.LENGTH_SHORT)
             }
         }
@@ -64,6 +74,9 @@ class MapFragment : Fragment() {
         checkPermission()
 
         initialSearchAddress()
+
+        val reminder = Reminder(latLng = LatLng(55.504251,36.0299415), message = "Сходи в кино!", radius = 1000.0)
+        App.getRepository().add(reminder,{}, {})
     }
 
     override fun onDestroyView() {
@@ -76,7 +89,12 @@ class MapFragment : Fragment() {
     }
 
     private fun requestPermission() {
-        permissionResult.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+        permissionResult.launch(
+            arrayOf(
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_BACKGROUND_LOCATION
+            )
+        )
     }
 
     private fun initialSearchAddress() {
