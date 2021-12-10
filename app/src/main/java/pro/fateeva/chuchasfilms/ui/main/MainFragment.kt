@@ -63,7 +63,13 @@ class MainFragment : Fragment() {
         val upcomingFilmList = binding.recyclerUpcomingFilmList
         upcomingFilmList.layoutManager = upcomingFilmslayoutManager
 
-        refresh()
+        val genresFilterButtons = binding.recyclerGenres
+        genresFilterButtons.adapter =
+            GenresFilterAdapter(GenreEnum.values().toList()) { genre ->
+                refresh(genre)
+            }
+
+        refresh(GenreEnum.ALL)
 
         setHasOptionsMenu(true)
     }
@@ -71,48 +77,59 @@ class MainFragment : Fragment() {
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.main_menu, menu)
-        menu.findItem(R.id.switchAdultFilms).isChecked = viewModel.getAdultFilmsPreference(requireContext())
+        menu.findItem(R.id.switchAdultFilms).isChecked =
+            viewModel.getAdultFilmsPreference(requireContext())
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == R.id.switchAdultFilms){
-            if (item.isChecked){
+        if (item.itemId == R.id.switchAdultFilms) {
+            if (item.isChecked) {
                 item.isChecked = false
             } else {
                 item.isChecked = true
             }
 
             viewModel.saveAdultFilmsPreference(requireContext(), item.isChecked)
-            refresh()
+            refresh(GenreEnum.ALL)
         }
 
-        if (item.itemId == R.id.favouriteFilms){
+        if (item.itemId == R.id.favouriteFilms) {
             openFavouriteFilmsFragment()
+        }
+
+        if (item.itemId == R.id.contacts) {
+            openContactsFragment()
         }
         return super.onOptionsItemSelected(item)
     }
 
-    private fun refresh() {
-        fillRecycleView(MovieTopList.POPULAR, recyclerPopularFilmList)
-        fillRecycleView(MovieTopList.NOW_PLAYING, recyclerNowPlayingFilmList)
-        fillRecycleView(MovieTopList.UPCOMING, recyclerUpcomingFilmList)
+    private fun refresh(genre: GenreEnum) {
+        fillRecycleView(MovieTopList.POPULAR, recyclerPopularFilmList, genre)
+        fillRecycleView(MovieTopList.NOW_PLAYING, recyclerNowPlayingFilmList, genre)
+        fillRecycleView(MovieTopList.UPCOMING, recyclerUpcomingFilmList, genre)
     }
 
-    private fun fillRecycleView(movieTopList: MovieTopList, recyclerView: RecyclerView) {
+    private fun fillRecycleView(
+        movieTopList: MovieTopList,
+        recyclerView: RecyclerView,
+        genre: GenreEnum
+    ) {
         viewModel.getMoviesData(movieTopList).observe(viewLifecycleOwner, Observer {
             renderData(
                 it,
                 movieTopList,
-                recyclerView
+                recyclerView,
+                genre
             )
         })
-        viewModel.getFilmsFromRemoteSource(movieTopList, requireContext())
+        viewModel.getFilmsFromRemoteSource(movieTopList, requireContext(), genre)
     }
 
     private fun renderData(
         appState: AppState,
         movieTopList: MovieTopList,
-        recyclerView: RecyclerView
+        recyclerView: RecyclerView,
+        genre: GenreEnum
     ) {
         when (appState) {
             is AppState.Success -> {
@@ -130,7 +147,7 @@ class MainFragment : Fragment() {
                 binding.root.showSnackbar(
                     R.string.error,
                     R.string.reload
-                ) { viewModel.getFilmsFromRemoteSource(movieTopList, requireContext()) }
+                ) { viewModel.getFilmsFromRemoteSource(movieTopList, requireContext(), genre) }
             }
             AppState.Loading -> {
                 binding.loadingLayout.visibility = View.VISIBLE
@@ -150,6 +167,13 @@ class MainFragment : Fragment() {
     private fun openFavouriteFilmsFragment() {
         parentFragmentManager.beginTransaction()
             .add(R.id.container, FavouriteFilmsFragment.newInstance())
+            .addToBackStack(null)
+            .commitAllowingStateLoss()
+    }
+
+    private fun openContactsFragment() {
+        parentFragmentManager.beginTransaction()
+            .add(R.id.container, ContactsFragment.newInstance())
             .addToBackStack(null)
             .commitAllowingStateLoss()
     }

@@ -11,4 +11,10 @@
         android:id="@+id/favouriteFilms"
         android:title="Избранные фильмы"/>
 
+    <item
+        android:id="@+id/contacts"
+        android:icon="@drawable/ic_baseline_import_contacts_24"
+        android:title="Контакты"
+        app:showAsAction="always"/>
+
 </menu>
