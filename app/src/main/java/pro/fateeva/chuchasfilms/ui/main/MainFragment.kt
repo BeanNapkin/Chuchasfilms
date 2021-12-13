@@ -100,6 +100,11 @@ class MainFragment : Fragment() {
         if (item.itemId == R.id.contacts) {
             openContactsFragment()
         }
+
+        if (item.itemId == R.id.map) {
+            openMapFragment()
+        }
+
         return super.onOptionsItemSelected(item)
     }
 
@@ -174,6 +179,13 @@ class MainFragment : Fragment() {
     private fun openContactsFragment() {
         parentFragmentManager.beginTransaction()
             .add(R.id.container, ContactsFragment.newInstance())
+            .addToBackStack(null)
+            .commitAllowingStateLoss()
+    }
+
+    private fun openMapFragment() {
+        parentFragmentManager.beginTransaction()
+            .add(R.id.container, MapFragment.newInstance())
             .addToBackStack(null)
             .commitAllowingStateLoss()
     }

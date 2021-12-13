@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "424686055427",
+    "project_id": "chuchas",
+    "storage_bucket": "chuchas.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:424686055427:android:fc19b045f398eec0589e36",
+        "android_client_info": {
+          "package_name": "pro.fateeva.chuchasfilms"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "424686055427-eh0enr6g2ov72cs3oe18t74q7thovdb6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCxiKBNyoBB5rpyuCVupgwvQu13rha8NTU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "424686055427-eh0enr6g2ov72cs3oe18t74q7thovdb6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

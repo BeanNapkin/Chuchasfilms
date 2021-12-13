@@ -2,13 +2,17 @@ package pro.fateeva.chuchasfilms.app
 
 import android.app.Application
 import androidx.room.Room
+import pro.fateeva.chuchasfilms.geofences.ReminderRepository
 import pro.fateeva.chuchasfilms.room.FilmDetailsDao
 import pro.fateeva.chuchasfilms.room.FilmDataBase
 
 class App: Application() {
 
+    private lateinit var repository: ReminderRepository
+
     override fun onCreate() {
         super.onCreate()
+        repository = ReminderRepository(this)
         appInstance = this
     }
 
@@ -35,5 +39,9 @@ class App: Application() {
 
             return db!!.filmDao()
         }
+
+        fun getRepository() = appInstance?.repository ?: error("App does not exist")
     }
+
+
 }

@@ -4,6 +4,7 @@ import android.content.IntentFilter
 import android.net.ConnectivityManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import pro.fateeva.chuchasfilms.geofences.Reminder
 import pro.fateeva.chuchasfilms.ui.main.MainFragment
 
 class MainActivity : AppCompatActivity() {
