@@ -83,11 +83,7 @@ class MainFragment : Fragment() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.switchAdultFilms) {
-            if (item.isChecked) {
-                item.isChecked = false
-            } else {
-                item.isChecked = true
-            }
+            item.isChecked = !item.isChecked
 
             viewModel.saveAdultFilmsPreference(requireContext(), item.isChecked)
             refresh(GenreEnum.ALL)
