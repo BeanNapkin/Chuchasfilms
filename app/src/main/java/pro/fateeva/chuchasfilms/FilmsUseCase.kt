@@ -27,13 +27,11 @@ class FilmsUseCase(
         return preferencesRepository.getAdultFilmsPreference(context)
     }
 
-    companion object{
-        fun filterOnIsAdult(filmList: List<Film>, includeAdult: Boolean) = filmList.filter {
-            includeAdult || it.isAdult == false
-        }
+    private fun filterOnIsAdult(filmList: List<Film>, includeAdult: Boolean) = filmList.filter {
+        includeAdult || it.isAdult == false
+    }
 
-        fun filterByGenre(filmList: List<Film>, genre: GenreEnum) = filmList.filter {
-            genre == GenreEnum.ALL || it.genres?.contains(genre.value) == true
-        }
+    private fun filterByGenre(filmList: List<Film>, genre: GenreEnum) = filmList.filter {
+        genre == GenreEnum.ALL || it.genres?.contains(genre.value) == true
     }
 }
